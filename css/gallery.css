@@ -137,3 +137,89 @@
   color: var(--color-cream-dim);
   letter-spacing: 0.06em;
 }
+
+/* ─── Featured single-image gallery (Whalen photo card) ─── */
+.gallery-feature {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0;
+  position: relative;
+}
+
+.gallery-feature-frame {
+  position: relative;
+  padding: var(--space-md);
+  border: 1px solid var(--color-gold-border);
+  background:
+    linear-gradient(180deg, rgba(19, 28, 57, 0.6) 0%, rgba(11, 18, 39, 0.6) 100%);
+  box-shadow:
+    0 40px 80px -30px rgba(0, 0, 0, 0.7),
+    0 0 0 1px var(--color-gold-border-soft);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.gallery-feature-frame:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 50px 100px -30px rgba(0, 0, 0, 0.8),
+    0 0 0 1px var(--color-gold);
+}
+
+/* Gold corner brackets — matches the editorial card treatment used elsewhere */
+.gallery-feature-frame::before,
+.gallery-feature-frame::after {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-gold);
+  pointer-events: none;
+}
+
+.gallery-feature-frame::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.gallery-feature-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+
+.gallery-feature img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--color-gold-border-soft);
+}
+
+.gallery-feature-caption {
+  margin-top: var(--space-lg);
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.55rem;
+  color: var(--color-cream-dim);
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 768px) {
+  .gallery-feature {
+    max-width: 100%;
+  }
+  .gallery-feature-frame {
+    padding: var(--space-sm);
+  }
+  .gallery-feature-frame::before,
+  .gallery-feature-frame::after {
+    width: 18px;
+    height: 18px;
+  }
+  .gallery-feature-caption {
+    font-size: 1.4rem;
+  }
+}

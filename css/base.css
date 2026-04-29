@@ -187,3 +187,62 @@ button {
   background: var(--color-gold);
   opacity: 0.6;
 }
+
+/* ─── Placeholder note — temporary content callout ─── */
+.placeholder-note {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin: var(--space-xl) auto 0;
+  padding: var(--space-sm) var(--space-lg);
+  border: 1px dashed var(--color-gold-border);
+  border-radius: 2px;
+  background: rgba(212, 176, 98, 0.04);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: var(--color-cream-muted);
+  text-align: center;
+  max-width: 560px;
+}
+
+/* When inside a section, center horizontally */
+.section .placeholder-note,
+.section--alt .placeholder-note {
+  display: flex;
+  width: max-content;
+  max-width: min(560px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.placeholder-note--inline {
+  margin-top: var(--space-md);
+  font-size: 1.3rem;
+  padding: var(--space-xs) var(--space-md);
+}
+
+.placeholder-note-tag {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  border: 1px solid var(--color-gold-border);
+  padding: 2px 8px;
+  border-radius: 2px;
+  background: rgba(212, 176, 98, 0.08);
+}
+
+@media (max-width: 600px) {
+  .placeholder-note {
+    flex-direction: column;
+    gap: var(--space-xs);
+    align-items: center;
+    font-size: 1.3rem;
+  }
+}

@@ -1,0 +1,42 @@
+/* ─── Our Story Section ─── */
+
+.story-prose {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.story-paragraph {
+  font-family: var(--font-serif);
+  font-size: 1.95rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--color-cream-soft);
+  margin: 0 auto;
+}
+
+.story-paragraph + .story-paragraph {
+  margin-top: var(--space-xl);
+}
+
+.story-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  width: 240px;
+  margin: var(--space-2xl) auto;
+  color: var(--color-gold);
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .story-paragraph {
+    font-size: 1.7rem;
+    line-height: 1.8;
+  }
+  .story-divider {
+    width: 180px;
+    margin: var(--space-xl) auto;
+  }
+}
