@@ -173,13 +173,53 @@
 .hotel-rate,
 .hotel-deadline {
   font-family: var(--font-serif);
-  font-size: 1.55rem;
+  font-size: 1.75rem;
+  line-height: 1.6;
   color: var(--color-cream-muted);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-sm);
 }
 
 .hotel-address {
   font-style: italic;
+}
+
+.hotel-sub {
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: var(--space-sm);
+}
+
+.hotel-rate {
+  font-size: 1.9rem;
+  color: var(--color-cream);
+  letter-spacing: 0.04em;
+}
+
+.hotel-deadline {
+  font-style: italic;
+  color: var(--color-gold-soft);
+}
+
+.hotel-note {
+  font-family: var(--font-serif);
+  font-size: 1.55rem;
+  font-style: italic;
+  color: var(--color-cream-muted);
+  line-height: 1.7;
+  margin-top: var(--space-lg);
+}
+
+.hotel-note a {
+  color: var(--color-gold);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-gold-border);
+}
+
+.hotel-note a:hover {
+  border-bottom-color: var(--color-gold);
 }
 
 .hotel-book-btn {
