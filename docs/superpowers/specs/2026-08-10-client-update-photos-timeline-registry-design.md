@@ -104,11 +104,17 @@ mosaic. The prior 9-cell grid CSS still exists in `css/gallery.css`
 tenth cell and retune the span values for the 6-portrait / 4-landscape mix
 rather than the old all-landscape stock set.
 
+**Confirmed by client 2026-08-10:** all 10 photos go up, and **no photographer
+credit line is required**.
+
 - All images `loading="lazy"` except the first (above-fold on some viewports)
 - Descriptive `alt` text per image, not filler
 - The caption "More to come from our engagement shoot in May" is removed — the
   shoot has happened
-- The lead position goes to the photo Theresa names as their favorite
+- Lead position: Theresa has not yet named a favorite. Build with `ENG_022` (the
+  golden-hour lakeside embrace — the strongest wide composition of the set) in
+  the lead cell. Swapping it later is a one-line change to the markup, so this
+  does not block anything.
 
 **Palette reconciliation.** The delivered photos are bright, high-key, warm
 summer images — golden-hour lake, floral sundress — going into a deep-navy
@@ -286,14 +292,17 @@ site contains no sensitive information.
 
 Non-blocking for WO-1/2/5, blocking for WO-3:
 
-1. Which photo is the favorite (filename), and should all 10 go up?
-2. Does the photographer's contract require a credit line on the site?
-3. What happens between 4:30 p.m. (cocktail hour ends) and 5:30 p.m. (reception
+1. ~~Should all 10 photos go up?~~ **Answered 2026-08-10: yes, all 10.**
+2. ~~Does the photographer's contract require a credit line?~~ **Answered
+   2026-08-10: no credit line needed.**
+3. Which photo is their favorite, for the lead cell? (Cosmetic; a default is in
+   place — see WO-1.)
+4. What happens between 4:30 p.m. (cocktail hour ends) and 5:30 p.m. (reception
    begins)? Guests will ask. Room flip, photos, open seating?
-4. Is 12:00 a.m. a hard end — bar close or venue curfew?
-5. Registry URLs, confirmed store names, honeymoon fund platform (WO-3 blocker).
-6. Is valet parking actually offered at The Merrill, and is it complimentary?
-7. Confirmed RSVP deadline date.
+5. Is 12:00 a.m. a hard end — bar close or venue curfew?
+6. Registry URLs, confirmed store names, honeymoon fund platform (WO-3 blocker).
+7. Is valet parking actually offered at The Merrill, and is it complimentary?
+8. Confirmed RSVP deadline date.
 
 ---
 
