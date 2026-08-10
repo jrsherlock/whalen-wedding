@@ -7,3 +7,10 @@
 # Local logs
 excalidraw.log
 *.log
+
+# macOS
+.DS_Store
+
+# Full-resolution photo originals from the photographer (~127 MB).
+# Masters live in Google Drive; only optimized derivatives under images/ ship.
+assets/
