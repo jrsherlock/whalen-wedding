@@ -310,8 +310,15 @@
   .gallery-item--6 { grid-column: span 3; grid-row: span 1; }
   .gallery-item--7 { grid-column: span 3; grid-row: span 1; }
   .gallery-item--8 { grid-column: span 3; grid-row: span 1; }
-  .gallery-item--9 { grid-column: span 6; grid-row: span 1; }
-  .gallery-item--10 { grid-column: span 6; grid-row: span 1; }
+  .gallery-item--9 { grid-column: span 6; grid-row: span 2; }
+  .gallery-item--10 { grid-column: span 6; grid-row: span 2; }
+
+  /* eng-141 is a tall portrait; even at span 2 the mobile band is wide
+     enough that center-cropping still cuts off both subjects' heads.
+     Bias the crop toward the top of the frame so faces stay in view. */
+  .gallery-item--9 img {
+    object-position: 50% 15%;
+  }
 
   /* FAQ */
   .faq-question {

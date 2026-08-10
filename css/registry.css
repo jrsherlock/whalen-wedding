@@ -140,3 +140,14 @@
 .registry-link:hover::after {
   transform: translateX(4px);
 }
+
+/* Interim note shown until the couple's registry links arrive. */
+.registry-note {
+  max-width: 62ch;
+  margin: 0 auto;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.7rem;
+  color: var(--color-cream-dim);
+}

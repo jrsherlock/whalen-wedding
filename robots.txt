@@ -1,2 +1,7 @@
+# Crawling is allowed on purpose: the <meta name="robots" content="noindex,
+# nofollow"> in index.html can only be honoured by a crawler that is permitted
+# to fetch the page. Disallow here would block that fetch, leaving the URL
+# eligible for bare-listing indexing, and would also break link-preview cards
+# in Messages, WhatsApp, Facebook and Slack.
 User-agent: *
-Disallow: /
+Allow: /

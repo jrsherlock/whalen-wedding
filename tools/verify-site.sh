@@ -47,10 +47,10 @@ present "ceremony at The Merrill"        'The Merrill Hotel'
 
 echo "── Discoverability ──"
 present "noindex meta"                   'content="noindex, nofollow"'
-if [ -f robots.txt ] && grep -q 'Disallow: /' robots.txt; then
-  ok "robots.txt disallows crawlers"
+if [ -f robots.txt ] && ! grep -qE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' robots.txt; then
+  ok "robots.txt allows crawling (so noindex can be honoured)"
 else
-  bad "robots.txt missing or does not disallow"
+  bad "robots.txt missing, or disallows crawling (which would defeat the noindex meta)"
 fi
 
 echo "── Custom domain ──"

@@ -70,8 +70,30 @@
   filter: saturate(1) brightness(1) contrast(1);
 }
 
+/* Resting veil — mirrors .gallery-item::after so the story photo reads as
+   part of the same navy winter system rather than sitting brighter than
+   the gallery at rest. Clears on hover, same as the gallery. */
+.story-figure::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 11, 28, 0.30) 0%, rgba(4, 6, 15, 0.55) 100%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(212, 176, 98, 0.10) 100%);
+  opacity: 1;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.story-figure:hover::after {
+  opacity: 0;
+}
+
 @media (hover: none) {
   .story-figure img {
     filter: saturate(0.96) brightness(0.94);
+  }
+  .story-figure::after {
+    opacity: 0.55;
   }
 }
