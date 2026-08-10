@@ -13,4 +13,7 @@ excalidraw.log
 
 # Full-resolution photo originals from the photographer (~127 MB).
 # Masters live in Google Drive; only optimized derivatives under images/ ship.
-assets/
+# No trailing slash on purpose: in a git worktree `assets` is a symlink to the
+# main checkout's originals, and "assets/" would match a directory but not a
+# symlink-to-directory, letting `git add -A` commit a broken absolute symlink.
+assets
