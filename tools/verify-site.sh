@@ -8,7 +8,10 @@ cd "$(dirname "$0")/.."
 # Guard: without this, every `absent` check trivially "passes" when
 # index.html is missing — a false green. Fail loudly instead.
 [ -f index.html ] || { echo "ERROR: index.html not found in $(pwd) — run this from the repo"; exit 2; }
-[ -d .git ]       || { echo "ERROR: not a git repo ($(pwd)) — git assertions would be meaningless"; exit 2; }
+# Use rev-parse, NOT `[ -d .git ]`: in a git worktree .git is a FILE holding a
+# gitdir pointer, so the -d test would reject the worktree this plan runs in.
+git rev-parse --git-dir >/dev/null 2>&1 \
+  || { echo "ERROR: not a git repo ($(pwd)) — git assertions would be meaningless"; exit 2; }
 
 PASS=0; FAIL=0
 ok()   { printf '  \033[32mPASS\033[0m  %s\n' "$1"; PASS=$((PASS+1)); }
