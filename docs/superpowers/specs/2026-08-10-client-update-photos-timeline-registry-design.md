@@ -41,14 +41,60 @@ The delivered files are 29-megapixel originals averaging 12 MB. They must not be
 committed to the repository: GitHub Pages would serve them at full weight, and
 the blobs would live in git history permanently even after later removal.
 
-- Add `assets/images/` to `.gitignore`. Originals stay local and are archived to
-  Google Drive as the master copies.
+- `assets/` is in `.gitignore` (done 2026-08-10). Originals stay local and are
+  archived to Google Drive as the master copies.
+
+**Colour profile — the critical step.** All 10 originals are **Adobe RGB (1998)**,
+300 DPI print masters. Resizing without an ICC conversion to sRGB makes browsers
+render them visibly desaturated — flat reds and dull greens, which would read as
+"the photos look wrong" with no obvious cause. Every derivative must be
+converted with an explicit perceptual-intent profile transform, not merely
+tagged. Verified: output reports `profile: sRGB IEC61966-2.1`.
+
+Transcode command (macOS, ImageMagick — `magick`, `cwebp`, `avifenc` all present):
+
+```
+SRGB="/System/Library/ColorSync/Profiles/sRGB Profile.icc"
+magick <src> -intent perceptual -profile "$SRGB" -colorspace sRGB \
+  -resize "<W>x<W>>" -strip -interlace Plane \
+  -quality 80 -sampling-factor 4:2:0 <out>.jpg
+magick <src> -intent perceptual -profile "$SRGB" -colorspace sRGB \
+  -resize "<W>x<W>>" -strip -quality 78 -define webp:method=6 <out>.webp
+```
+
+`-strip` removes Lightroom/Photoshop tags and camera serials. (No GPS data was
+present in these files, but stripping is still correct.)
+
 - Generate derivatives into `images/gallery/engagement/`:
-  - Long edge 1600 px (standard) and 2400 px (retina)
-  - JPEG quality 82 **and** WebP, served via `<picture>` with JPEG fallback
-  - Target ≤ 250 KB per standard-size image
+  - Long edge **800 px (1x) and 1600 px (2x)**, served via `<picture>` +
+    `srcset`. Sized from the real layout: the grid is `--content-wide` (1200 px)
+    across 12 columns with 12 px gaps, so the largest cell is a span-5 × span-2
+    at ~493 × 372 CSS px. 1600 px covers that at 2x with margin; the 2400 px
+    variant in an earlier draft of this spec was pure waste.
+  - WebP **and** JPEG fallback. AVIF was considered and rejected — ~30% off an
+    18 KB file does not justify a third format.
 - Filenames: preserve the photographer's sequence numbers so photos can be
   traced back to originals — `eng-022.jpg`, `eng-044.jpg`, etc.
+
+**Measured output** (samples ENG_022 landscape, ENG_044 portrait):
+
+| Variant | Size |
+|---|---|
+| 800 px WebP | 14–18 KB |
+| 800 px JPEG | 29–33 KB |
+| 1600 px WebP | 37–52 KB |
+| 1600 px JPEG | 85–99 KB |
+
+Full gallery page load: ~160 KB at 1x, ~450 KB at 2x. Repo grows ~1.8 MB.
+Quality 78 WebP was compared against q70 and q85 and inspected for banding in
+the backlit sky gradient — none visible; q85 costs 37% more bytes for no
+perceptible gain. The earlier ≤250 KB budget in this spec was an overestimate by
+roughly an order of magnitude.
+
+Because Theresa offered to send more photos, the transcode ships as a committed
+script, `tools/optimize-photos.sh`, rather than a one-off command. This is a
+manually-run tool, **not** a build step — the project's no-build-step property is
+preserved.
 
 ### Gallery section (`#gallery`)
 
@@ -63,6 +109,16 @@ rather than the old all-landscape stock set.
 - The caption "More to come from our engagement shoot in May" is removed — the
   shoot has happened
 - The lead position goes to the photo Theresa names as their favorite
+
+**Palette reconciliation.** The delivered photos are bright, high-key, warm
+summer images — golden-hour lake, floral sundress — going into a deep-navy
+winter candlelight theme. Dropped in untreated, ten of them fight the palette.
+Treatment: a subtle navy-tinted overlay with a slight warmth push at rest,
+lifting to full colour on hover and on tap/focus for touch devices. The existing
+`.gallery-item::after` pseudo-element is the hook. The photos stay recognizably
+themselves — no duotone, no heavy grading — so Theresa sees her photographer's
+work, and any guest who engages with an image sees true colour. Applies to the
+Our Story photo as well, for consistency.
 
 Explicitly out of scope: lightbox / click-to-enlarge. Not requested, and it
 would add a JS module plus focus-trap and keyboard-navigation work.
