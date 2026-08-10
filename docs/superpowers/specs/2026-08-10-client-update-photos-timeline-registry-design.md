@@ -303,6 +303,60 @@ site contains no sensitive information.
 
 ---
 
+---
+
+## Post-Implementation Status (2026-08-10)
+
+Implemented on branch `worktree-client-update-aug-2026`, 13 commits, each task
+individually reviewed plus a whole-branch review and one fix wave. Automated
+gate `tools/verify-site.sh`: **passed 16, failed 0**.
+
+### Changed from the spec during implementation
+
+- **Registry cards removed entirely.** The final review found that the three
+  card names (Crate & Barrel, Williams Sonoma, Honeyfund) and their
+  descriptions were themselves unconfirmed design-phase placeholders — and
+  Theresa's verbatim message sitting above them lent her voice to invented
+  retailer names. Replaced with "Our registry details will be shared here
+  soon." The card CSS and SVG icons are retained for when real links arrive.
+- **robots.txt allows crawling.** The spec called for `Disallow: /` alongside
+  `noindex`. That pair is strictly weaker than `noindex` alone — `Disallow`
+  blocks the fetch, so the `noindex` is never read, and a blocked URL can
+  still be indexed as a bare listing. It also breaks link-preview cards in
+  Messages/WhatsApp/Facebook, defeating the `og:image` added in the same
+  work. robots.txt now allows crawling; `noindex` does the actual work.
+- **FAQ "Cozy, candlelit, and warm." deleted** — unsourced venue-decor claim.
+- **Parking answer** states only the single-venue fact plus an explicit
+  "details will be confirmed"; the spec's suggested "has on-site parking"
+  was itself unsourced.
+- Gallery item 5 spans 2 rows (closes an empty cell >1024px); items 9–10 span
+  2 rows on mobile with `object-position: 50% 15%` on item 9 (portraits were
+  being cropped through the subjects' heads at ≤768px).
+
+### Accepted, not fixed
+
+- ~135 lines of dead CSS in `css/gallery.css` (`.gallery-placeholder`,
+  `.gallery-feature*`) orphaned by the rebuild. Harmless; worth a cleanup pass.
+- The `✦` timeline ornament has no `aria-hidden`, matching the pre-existing
+  site-wide `.date-stamp .sep` convention. Fix site-wide or not at all.
+- `.gallery-item:focus-within` is dead — no focusable descendants — so
+  keyboard users cannot clear the resting veil. Needs a focusable element to
+  be meaningful.
+- `.timeline-detail` contrast is 4.39:1, a marginal AA miss, using the same
+  token as the pre-existing `.event-address`.
+- `eng-091-1600.jpg` (304,476 B) passes the gate's 307,200-byte threshold but
+  exceeds a decimal 300 KB reading by ~1.5%. JPEG fallback only.
+
+### Must be done manually before invitations go out
+
+1. **Load the real guest list.** The `GuestList` tab still holds 200 sample
+   names. Wave 1 will fail RSVP lookup for every guest until it is replaced.
+   This is the hardest blocker and is not a code task.
+2. **Open the live site on a real phone** and confirm gallery photos are
+   legible without tapping. `@media (hover: none)` could not be verified in
+   any available tool — Playwright reports `hover: hover`.
+3. Confirm the RSVP deadline date (still a visible, deliberate placeholder).
+
 ## Open Questions for the Client
 
 Non-blocking for WO-1/2/5, blocking for WO-3:
