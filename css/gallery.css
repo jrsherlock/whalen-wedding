@@ -36,9 +36,10 @@
 .gallery-item--4 { grid-column: span 4; grid-row: span 2; }
 .gallery-item--5 { grid-column: span 3; grid-row: span 1; }
 .gallery-item--6 { grid-column: span 5; grid-row: span 1; }
-.gallery-item--7 { grid-column: span 4; grid-row: span 1; }
-.gallery-item--8 { grid-column: span 4; grid-row: span 1; }
-.gallery-item--9 { grid-column: span 4; grid-row: span 1; }
+.gallery-item--7 { grid-column: 1 / span 3; grid-row: span 1; }
+.gallery-item--8 { grid-column: span 3; grid-row: span 1; }
+.gallery-item--9 { grid-column: span 3; grid-row: span 1; }
+.gallery-item--10 { grid-column: span 3; grid-row: span 1; }
 
 .gallery-item img {
   width: 100%;
@@ -106,9 +107,18 @@
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7);
 }
 
-.gallery-item:hover img {
+/* Resting treatment — the engagement photos are bright, warm and high-key;
+   this settles them into the navy winter palette without altering the
+   photographer's work. Full colour returns on hover/focus. */
+.gallery-item img {
+  filter: saturate(0.9) brightness(0.86) contrast(1.03);
+  transition: filter var(--transition-base), transform var(--transition-base);
+}
+
+.gallery-item:hover img,
+.gallery-item:focus-within img {
   transform: scale(1.04);
-  filter: brightness(0.95) saturate(1);
+  filter: saturate(1) brightness(1) contrast(1);
 }
 
 .gallery-item::after {
@@ -116,15 +126,27 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, transparent 50%, rgba(4, 6, 15, 0.7) 100%),
-    radial-gradient(ellipse at center, transparent 60%, rgba(212, 176, 98, 0.08) 100%);
-  opacity: 0;
+    linear-gradient(180deg, rgba(7, 11, 28, 0.30) 0%, rgba(4, 6, 15, 0.55) 100%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(212, 176, 98, 0.10) 100%);
+  opacity: 1;
   transition: opacity var(--transition-base);
   pointer-events: none;
 }
 
-.gallery-item:hover::after {
-  opacity: 1;
+.gallery-item:hover::after,
+.gallery-item:focus-within::after {
+  opacity: 0;
+}
+
+/* Touch devices get no hover — lighten the resting veil so photos read
+   properly without interaction. */
+@media (hover: none) {
+  .gallery-item img {
+    filter: saturate(0.96) brightness(0.94);
+  }
+  .gallery-item::after {
+    opacity: 0.55;
+  }
 }
 
 /* ─── Gallery Caption (optional) ─── */

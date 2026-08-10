@@ -91,9 +91,10 @@
   .gallery-item--4 { grid-column: span 6; grid-row: span 2; }
   .gallery-item--5 { grid-column: span 6; grid-row: span 1; }
   .gallery-item--6 { grid-column: span 6; grid-row: span 1; }
-  .gallery-item--7 { grid-column: span 4; grid-row: span 1; }
-  .gallery-item--8 { grid-column: span 4; grid-row: span 1; }
-  .gallery-item--9 { grid-column: span 4; grid-row: span 1; }
+  .gallery-item--7 { grid-column: span 3; grid-row: span 1; }
+  .gallery-item--8 { grid-column: span 3; grid-row: span 1; }
+  .gallery-item--9 { grid-column: span 3; grid-row: span 1; }
+  .gallery-item--10 { grid-column: span 3; grid-row: span 1; }
 
   /* Hide section ornaments */
   .section-ornament {
@@ -299,6 +300,7 @@
   .gallery-item--7 { grid-column: span 3; grid-row: span 1; }
   .gallery-item--8 { grid-column: span 3; grid-row: span 1; }
   .gallery-item--9 { grid-column: span 6; grid-row: span 1; }
+  .gallery-item--10 { grid-column: span 6; grid-row: span 1; }
 
   /* FAQ */
   .faq-question {
