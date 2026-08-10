@@ -1,13 +1,21 @@
 /* ─── Registry Section ─── */
 .registry-intro {
   text-align: center;
-  max-width: 580px;
+  max-width: 62ch;
   margin: 0 auto var(--space-2xl);
   font-family: var(--font-serif);
   font-size: 1.75rem;
   font-style: italic;
   color: var(--color-cream-muted);
   line-height: 1.7;
+}
+
+.registry-intro p {
+  margin: 0;
+}
+
+.registry-intro p + p {
+  margin-top: var(--space-md);
 }
 
 .registry-grid {
