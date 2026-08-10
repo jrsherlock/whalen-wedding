@@ -207,6 +207,17 @@
     width: 20px;
   }
 
+  /* Our Story */
+  .story-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .story-figure {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+
   /* Details */
   .details-quote {
     font-size: 1.65rem;
