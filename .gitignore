@@ -1,0 +1,9 @@
+# Local Netlify folder
+.netlify
+
+# Claude Code local config
+.claude/
+
+# Local logs
+excalidraw.log
+*.log
