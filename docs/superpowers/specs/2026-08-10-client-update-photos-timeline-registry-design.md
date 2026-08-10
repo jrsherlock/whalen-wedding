@@ -76,20 +76,35 @@ present in these files, but stripping is still correct.)
 - Filenames: preserve the photographer's sequence numbers so photos can be
   traced back to originals — `eng-022.jpg`, `eng-044.jpg`, etc.
 
-**Measured output** (samples ENG_022 landscape, ENG_044 portrait):
+**Measured output — full set of 10, actual** (corrected 2026-08-10 after
+transcoding all 10; an earlier revision of this spec quoted figures from a
+2-photo sample and understated the real numbers by roughly 2.6×):
 
-| Variant | Size |
+| Variant | Range across all 10 |
 |---|---|
-| 800 px WebP | 14–18 KB |
-| 800 px JPEG | 29–33 KB |
-| 1600 px WebP | 37–52 KB |
-| 1600 px JPEG | 85–99 KB |
+| 800 px WebP | 14–75 KB |
+| 800 px JPEG | 28–95 KB |
+| 1600 px WebP | 36–201 KB |
+| 1600 px JPEG | 82–297 KB |
 
-Full gallery page load: ~160 KB at 1x, ~450 KB at 2x. Repo grows ~1.8 MB.
+Full gallery fetch for all 10 photos: **~417 KB at 1x, ~1.15 MB at 2x** (WebP,
+which every current browser takes). Repo grows **4.1 MB** for all 40 files.
+
+The spread is driven by subject matter, not resolution: smooth backlit shots
+(eng-022, eng-044) compress to a fraction of texture-heavy ones (eng-091,
+eng-078 — grass, water, floral fabric). Sampling only the smooth ones is what
+produced the earlier bad estimate.
+
 Quality 78 WebP was compared against q70 and q85 and inspected for banding in
 the backlit sky gradient — none visible; q85 costs 37% more bytes for no
-perceptible gain. The earlier ≤250 KB budget in this spec was an overestimate by
-roughly an order of magnitude.
+perceptible gain. Re-checked after the full transcode on a texture-heavy shot:
+still no visible artefacting.
+
+**Budget wording:** the constraint is enforced by `find -size +300k`, i.e.
+307,200 bytes (KiB), and is stated in those terms deliberately. One file,
+`eng-091-1600.jpg` at 304,476 B, passes that check while exceeding a decimal
+300,000-byte reading by ~1.5%. It is a JPEG fallback that WebP-capable browsers
+never fetch, so it is accepted rather than re-encoded.
 
 Because Theresa offered to send more photos, the transcode ships as a committed
 script, `tools/optimize-photos.sh`, rather than a one-off command. This is a

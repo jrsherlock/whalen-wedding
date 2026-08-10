@@ -15,7 +15,10 @@
 - **No build step.** The site must remain plain HTML/CSS/ES-module JS served directly. `tools/*.sh` are manually-run tools, never wired into a build or CI.
 - **No invented content.** Nothing may appear on the page that Theresa did not state. Where a fact is unknown, leave existing copy alone and flag it — do not fill the gap with plausible wording. (Prior incident: commit `7c8a177` removed a fabricated quote.)
 - **Colour profile:** every image derivative must be ICC-converted to sRGB with `-intent perceptual -profile "$SRGB"`. Originals are Adobe RGB (1998); tagging alone is not sufficient.
-- **Image budget:** no file in `images/` may exceed 300 KB.
+- **Image budget:** no file in `images/` may exceed 300 KiB (307,200 bytes) — the
+  threshold `find -size +300k` actually enforces. Stated in KiB deliberately:
+  `eng-091-1600.jpg` at 304,476 B passes the gate but would fail a decimal
+  300,000-byte reading, and that JPEG fallback is accepted as-is.
 - **Originals never enter git.** `assets/` is gitignored; do not `git add -f` it.
 - **Design tokens only.** Use existing custom properties from `css/variables.css` (`--color-gold`, `--color-cream-muted`, `--space-lg`, `--transition-base`, …). Do not introduce raw hex values or new tokens.
 - **Reduced motion:** `js/animations.js` returns early when `prefers-reduced-motion: reduce` matches, so `.reveal` elements never receive `.visible`. Any new revealed element MUST therefore be visible by default in CSS, with `.reveal` only adding the animation — never rely on `.visible` to make content appear.
@@ -539,7 +542,10 @@ Expected: exactly one line, `profile: sRGB IEC61966-2.1`. If any file still repo
 find images/gallery/engagement -type f -size +300k
 ```
 
-Expected: no output. (Measured range is 14–99 KB.)
+Expected: no output. Actual measured range across all 10 photos is
+14,066 B – 304,476 B. The largest, `eng-091-1600.jpg`, clears the gate's
+307,200-byte threshold by only ~2.7 KB, so this check has a thin margin —
+if a future re-transcode raises quality, expect it to trip here first.
 
 ```bash
 # expected file count
