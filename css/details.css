@@ -160,3 +160,97 @@
   color: var(--color-cream-dim);
   margin-top: var(--space-sm);
 }
+
+/* ─── Wedding Day Timeline ─── */
+.timeline {
+  max-width: 52rem;
+  margin: var(--space-2xl) auto 0;
+}
+
+.timeline-heading {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  text-align: center;
+  margin: 0 0 var(--space-xl);
+}
+
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--space-xl);
+  position: relative;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-xl);
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+/* Node — the site's ✦ ornament, matching .date-stamp .sep */
+.timeline-item::before {
+  content: '\2726';
+  position: absolute;
+  left: calc(var(--space-xl) * -1);
+  top: 0;
+  width: var(--space-lg);
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 2.2;
+  color: var(--color-gold);
+}
+
+/* Rail segment — drawn per item below its node, so it never needs to
+   match the translucent .section--alt background. */
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-xl) * -1 + var(--space-lg) / 2);
+  top: 2.6rem;
+  bottom: 0.4rem;
+  width: 1px;
+  background: var(--color-gold-border);
+}
+
+.timeline-time {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-style: italic;
+  color: var(--color-cream);
+  line-height: 1.5;
+}
+
+.timeline-event {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-cream-muted);
+  margin-top: var(--space-xs);
+}
+
+.timeline-detail {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  color: var(--color-cream-dim);
+  margin-top: var(--space-xs);
+}
+
+.timeline-note {
+  margin: var(--space-xl) 0 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.7rem;
+  color: var(--color-cream-muted);
+}

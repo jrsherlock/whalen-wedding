@@ -219,6 +219,27 @@
     padding: var(--space-lg) var(--space-md);
   }
 
+  .timeline {
+    margin-top: var(--space-xl);
+  }
+
+  .timeline-list {
+    padding-left: var(--space-lg);
+  }
+
+  .timeline-item::before {
+    left: calc(var(--space-lg) * -1);
+    width: var(--space-md);
+  }
+
+  .timeline-item:not(:last-child)::after {
+    left: calc(var(--space-lg) * -1 + var(--space-md) / 2);
+  }
+
+  .timeline-time {
+    font-size: 1.8rem;
+  }
+
   .date-stamp-numeric {
     font-size: 2.8rem;
     gap: var(--space-sm);
