@@ -243,10 +243,27 @@ Non-blocking for WO-1/2/5, blocking for WO-3:
 
 ## Out of Scope — Flagged Separately
 
-`whalenwattswedding.com` (Namecheap) is suspended for failed WHOIS verification
-and is not yet pointed at the site. If invitations are printed with that URL, it
-must be resolved before wave 1 goes to print. This is the longest-lead item in
-the engagement and is independent of all work above.
+`whalenwattswedding.com` (Namecheap) is **active** — the WHOIS verification
+suspension was cleared on 2026-07-01 and re-confirmed on 2026-08-10 (normal
+nameservers, no `clientHold`). Expiry 2027-05-12.
+
+It is **not yet pointed at the site**, however. It serves Namecheap's parking
+page, and GitHub Pages has no custom domain set (`cname: null`, no `CNAME` file
+in the repo). Wiring it up:
+
+1. Namecheap BasicDNS — four apex A records to `185.199.108.153`,
+   `185.199.109.153`, `185.199.110.153`, `185.199.111.153`, plus a `www` CNAME
+   to `jrsherlock.github.io`
+2. Commit a `CNAME` file at the repo root containing `whalenwattswedding.com`
+3. Set the custom domain in Pages settings, wait for the Let's Encrypt
+   certificate, then enable Enforce HTTPS
+
+Order matters — setting the Pages custom domain before DNS resolves causes
+certificate provisioning to fail and needs a retry.
+
+If invitations are printed with that URL, all three steps must be done and
+verified before wave 1 goes to print. Independent of all work above, and worth
+doing early: DNS propagation plus certificate issuance can take several hours.
 
 ---
 
