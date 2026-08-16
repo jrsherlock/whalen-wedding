@@ -45,6 +45,12 @@ present "cocktail hour listed"           'Cocktail Hour'
 present "single-venue note"              'no travel between venues'
 present "ceremony at The Merrill"        'The Merrill Hotel'
 
+echo "── Gallery (Option D panorama + lightbox) ──"
+present "panorama gallery markup"        'class="gallery-panorama'
+absent  "old mosaic grid retired"        'class="gallery-grid"'
+[ "$(grep -c 'class="gallery-slide"' index.html)" -eq 10 ] && ok "10 gallery slides" || bad "expected 10 gallery slides"
+grep -q "initLightbox" js/main.js && ok "lightbox wired in main.js" || bad "lightbox not wired in main.js"
+
 echo "── Discoverability ──"
 present "noindex meta"                   'content="noindex, nofollow"'
 if [ -f robots.txt ] && ! grep -qE '^[[:space:]]*Disallow:[[:space:]]*/[[:space:]]*$' robots.txt; then
