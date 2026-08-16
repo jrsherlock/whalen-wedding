@@ -1,10 +1,10 @@
 /**
- * RSVP form: two-step flow with server-side name validation.
+ * RSVP form: single-step submit.
  *
- * Step 1: Guest enters name + email → "Find My Invitation" validates
- *         the name against the server-side guest list.
- * Step 2: If validated, the rest of the form (attendance, dietary,
- *         message) slides in. Final submit records the RSVP.
+ * The backend records every response and soft-matches the name
+ * against the guest list for the couple to review; nothing is
+ * rejected client- or server-side apart from basic field checks,
+ * a honeypot, a timing check and rate limiting.
  */
 
 // ─── Configuration ───
@@ -14,10 +14,7 @@ export function initRSVP() {
   const form = document.getElementById('rsvp-form');
   if (!form) return;
 
-  const lookupBtn = document.getElementById('rsvp-lookup');
   const submitBtn = document.getElementById('rsvp-submit');
-  const step1 = document.getElementById('rsvp-step-1');
-  const step2 = document.getElementById('rsvp-step-2');
   const successEl = document.getElementById('rsvp-success');
   const errorBanner = document.getElementById('rsvp-error-banner');
   const otherCheck = document.getElementById('dietary-other-check');
@@ -108,23 +105,12 @@ export function initRSVP() {
   // ─── Bot detection ───
   const loadedAt = Date.now();
 
-  // ─── Step 1: Find My Invitation ───
-  lookupBtn.addEventListener('click', async () => {
+  // ─── Submit RSVP ───
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
     clearErrors();
 
-    // Client-side validation — name + email only
-    let valid = true;
-    const name = form.querySelector('#guest-name');
-    if (!name.value.trim()) {
-      showError('name-error', 'Please enter your name');
-      valid = false;
-    }
-    const email = form.querySelector('#guest-email');
-    if (!email.value.trim() || !email.value.includes('@')) {
-      showError('email-error', 'Please enter a valid email address');
-      valid = false;
-    }
-    if (!valid) return;
+    if (!validateForm()) return;
 
     // Honeypot
     const honeypot = form.querySelector('[name="_gotcha"]');
@@ -132,58 +118,6 @@ export function initRSVP() {
 
     // Bot timing check
     if (Date.now() - loadedAt < 3000) return;
-
-    // Show loading
-    lookupBtn.classList.add('loading');
-    lookupBtn.disabled = true;
-
-    try {
-      const formData = new FormData();
-      formData.set('guest_name', name.value.trim());
-      formData.set('email', email.value.trim());
-      formData.set('action', 'validate');
-
-      const response = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        body: formData,
-        headers: { 'Accept': 'application/json' },
-      });
-
-      const result = await response.json();
-
-      if (!result.ok) {
-        if (result.error === 'name_not_found') {
-          showError('name-error', result.message);
-          lookupBtn.classList.remove('loading');
-          lookupBtn.disabled = false;
-          return;
-        }
-        if (result.error === 'rate_limited') {
-          showBannerError(result.message);
-          lookupBtn.classList.remove('loading');
-          lookupBtn.disabled = false;
-          return;
-        }
-        throw new Error(result.error || 'Validation failed');
-      }
-
-      // Name validated — transition to step 2
-      lookupBtn.classList.remove('loading');
-      step1.querySelector('.form-actions').style.display = 'none';
-      step2.classList.add('visible');
-    } catch {
-      showBannerError();
-      lookupBtn.classList.remove('loading');
-      lookupBtn.disabled = false;
-    }
-  });
-
-  // ─── Step 2: Submit RSVP ───
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    clearErrors();
-
-    if (!validateStep2()) return;
 
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
@@ -199,9 +133,6 @@ export function initRSVP() {
         formData.set('dietary_restrictions', dietaryValues.join(', '));
       }
 
-      // Remove the validate action so backend records the RSVP
-      formData.delete('action');
-
       if (FORM_ENDPOINT) {
         const response = await fetch(FORM_ENDPOINT, {
           method: 'POST',
@@ -212,12 +143,6 @@ export function initRSVP() {
         const result = await response.json();
 
         if (!result.ok) {
-          if (result.error === 'name_not_found') {
-            showError('name-error', result.message);
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-            return;
-          }
           if (result.error === 'rate_limited') {
             showBannerError(result.message);
             submitBtn.classList.remove('loading');
@@ -243,8 +168,19 @@ export function initRSVP() {
   });
 
   // ─── Validation ───
-  function validateStep2() {
+  function validateForm() {
     let valid = true;
+
+    const name = form.querySelector('#guest-name');
+    if (!name.value.trim()) {
+      showError('name-error', 'Please enter your name');
+      valid = false;
+    }
+    const email = form.querySelector('#guest-email');
+    if (!email.value.trim() || !email.value.includes('@')) {
+      showError('email-error', 'Please enter a valid email address');
+      valid = false;
+    }
 
     const attendance = form.querySelector('input[name="attendance"]:checked');
     if (!attendance) {
