@@ -6,11 +6,21 @@
  * Guest-list gating: the submitted name is validated against the
  * "GuestList" tab before the RSVP is accepted.  No name data is
  * ever sent to the client; matching is entirely server-side.
+ *
+ * Staged invitations: if the GuestList tab has a column headed
+ * "Invited" (case-insensitive, any position), only rows where that
+ * cell is checked / TRUE / Yes / Y / X / 1 can RSVP. This lets the
+ * whole guest list be entered up front and released in waves by
+ * ticking boxes. If the column is absent, every listed name is
+ * treated as invited (original behaviour). Names that are listed
+ * but not yet invited get the same "not found" response as unknown
+ * names, so nothing about the wave-2 list leaks.
  */
 
 const SHEET_ID = '1IXK9JWYttUDPNpoaro1ozdrWmdJx3WSp647oPyQGwPA';
 const SHEET_NAME = 'Responses';
 const GUEST_LIST_TAB = 'GuestList';
+const INVITED_HEADER = 'invited';  // matched case-insensitively against row 1
 const RATE_LIMIT_MAX = 5;       // attempts per window
 const RATE_LIMIT_TTL = 600;     // 10-minute window (seconds)
 
@@ -91,10 +101,16 @@ function loadGuestList() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sheet = ss.getSheetByName(GUEST_LIST_TAB);
   const data = sheet.getDataRange().getValues();
+  const invitedCol = findInvitedColumn(data[0] || []);
   const guests = [];
   for (let i = 1; i < data.length; i++) {        // skip header
     const canonical = normalize(String(data[i][0]));
     if (!canonical) continue;
+    // Staged rollout: skip rows not yet released. Excluding them here
+    // (rather than flagging them) keeps findGuest's fuzzy tiers from
+    // matching an un-invited name and lets the "not found" reply stay
+    // identical for unknown and not-yet-invited guests.
+    if (invitedCol !== -1 && !isTruthyCell(data[i][invitedCol])) continue;
     const aliasStr = String(data[i][1] || '');
     const aliases = aliasStr
       .split(',')
@@ -107,6 +123,21 @@ function loadGuestList() {
     });
   }
   return guests;
+}
+
+/** Index of the "Invited" column in the header row, or -1 if absent. */
+function findInvitedColumn(headerRow) {
+  for (let c = 0; c < headerRow.length; c++) {
+    if (String(headerRow[c]).trim().toLowerCase() === INVITED_HEADER) return c;
+  }
+  return -1;
+}
+
+/** Sheets checkbox (boolean TRUE) or a human "yes" mark. */
+function isTruthyCell(v) {
+  if (v === true) return true;
+  const t = String(v === null || v === undefined ? '' : v).trim().toLowerCase();
+  return t === 'true' || t === 'yes' || t === 'y' || t === 'x' || t === '1' || t === '✓';
 }
 
 function normalize(name) {
