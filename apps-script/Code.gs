@@ -100,37 +100,124 @@ function doGet() {
 function loadGuestList() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sheet = ss.getSheetByName(GUEST_LIST_TAB);
-  const data = sheet.getDataRange().getValues();
-  const invitedCol = findInvitedColumn(data[0] || []);
+  return buildGuestList(sheet.getDataRange().getValues());
+}
+
+/**
+ * Turn the raw GuestList grid into matchable guest entries.
+ *
+ * Two layouts are supported, detected from the header row:
+ *   A) "First Name" / "Last Name" columns (Theresa's working sheet).
+ *      One row is a household; the first-name cell may list several
+ *      people ("Sheila, John and Liam"). Each person becomes their own
+ *      entry ("sheila cook") and the household as written is also an
+ *      entry, so a guest can type either.
+ *   B) Legacy: column A = canonical Name, column B = comma-separated
+ *      Aliases (used before the real list was pasted in).
+ *
+ * Rows are skipped when the "Invited" column exists and is not ticked.
+ */
+function buildGuestList(data) {
+  const header = data[0] || [];
+  const invitedCol = findInvitedColumn(header);
+  const firstCol = findHeaderColumn(header, 'first name');
+  const lastCol = findHeaderColumn(header, 'last name');
+  const aliasCol = findHeaderColumn(header, 'aliases');
   const guests = [];
+
   for (let i = 1; i < data.length; i++) {        // skip header
-    const canonical = normalize(String(data[i][0]));
-    if (!canonical) continue;
+    const row = data[i];
     // Staged rollout: skip rows not yet released. Excluding them here
     // (rather than flagging them) keeps findGuest's fuzzy tiers from
     // matching an un-invited name and lets the "not found" reply stay
     // identical for unknown and not-yet-invited guests.
-    if (invitedCol !== -1 && !isTruthyCell(data[i][invitedCol])) continue;
-    const aliasStr = String(data[i][1] || '');
-    const aliases = aliasStr
-      .split(',')
-      .map(a => normalize(a))
-      .filter(Boolean);
-    guests.push({
-      canonical: canonical,
-      aliases: aliases,
-      lastName: canonical.split(' ').slice(-1)[0]
-    });
+    if (invitedCol !== -1 && !isTruthyCell(row[invitedCol])) continue;
+
+    if (firstCol === -1 || lastCol === -1) {
+      // Layout B (legacy): Name | Aliases
+      const canonical = normalize(String(row[0]));
+      if (!canonical) continue;
+      guests.push(makeGuest(canonical, splitNames(String(row[1] || '')),
+                            canonical.split(' ').slice(-1)[0]));
+      continue;
+    }
+
+    // Layout A: First Name | Last Name
+    const firstRaw = String(row[firstCol] || '');
+    const lastRaw = String(row[lastCol] || '');
+    const people = splitNames(firstRaw);
+    if (!people.length) continue;               // nothing to match on
+    const surnames = splitNames(lastRaw);       // "Watts/Pruis" -> ["watts","pruis"]
+    const extraAliases = aliasCol !== -1 ? splitNames(String(row[aliasCol] || '')) : [];
+    const primarySurname = surnames[0] || '';
+
+    // Household as written, e.g. "sheila john and liam cook"
+    const household = normalize(looseName(firstRaw) + ' ' + looseName(lastRaw));
+    guests.push(makeGuest(household, people.concat(extraAliases), primarySurname));
+
+    // One entry per person and surname, e.g. "john cook"
+    if (people.length > 1 || surnames.length > 1) {
+      for (let k = 0; k < people.length; k++) {
+        if (!surnames.length) {
+          guests.push(makeGuest(people[k], [people[k]].concat(extraAliases), ''));
+          continue;
+        }
+        for (let s = 0; s < surnames.length; s++) {
+          guests.push(makeGuest(people[k] + ' ' + surnames[s],
+                                [people[k]].concat(extraAliases), surnames[s]));
+        }
+      }
+    }
   }
   return guests;
 }
 
-/** Index of the "Invited" column in the header row, or -1 if absent. */
-function findInvitedColumn(headerRow) {
+function makeGuest(canonical, aliases, lastName) {
+  const seen = {};
+  const uniq = [];
+  for (let i = 0; i < aliases.length; i++) {
+    const a = normalize(aliases[i]);
+    if (a && !seen[a]) { seen[a] = true; uniq.push(a); }
+  }
+  return { canonical: canonical, aliases: uniq, lastName: lastName || '' };
+}
+
+/**
+ * Split a cell that lists several people into normalized names.
+ * Separators Theresa uses: "_", ",", "and", "&", "+", "/".
+ * Parentheticals and ages are dropped by stripNotes/normalize:
+ *   "Sheila, John and Liam"  -> ["sheila","john","liam"]
+ *   "Todd_Jodi and Lyla 14"  -> ["todd","jodi","lyla"]
+ *   "John (Dad)"             -> ["john"]
+ */
+function splitNames(str) {
+  return stripNotes(str)
+    .split(/,|&|\band\b|\+|\/|_/i)
+    .map(normalize)
+    .filter(Boolean);
+}
+
+/** Drop "(…)" notes such as "(Dad)". */
+function stripNotes(str) {
+  return String(str).replace(/\([^)]*\)/g, ' ');
+}
+
+/** stripNotes + turn "_" / "/" separators into spaces, for the household string. */
+function looseName(str) {
+  return stripNotes(str).replace(/[_\/]/g, ' ');
+}
+
+/** Index of a header (case-insensitive, trimmed) in row 1, or -1 if absent. */
+function findHeaderColumn(headerRow, name) {
   for (let c = 0; c < headerRow.length; c++) {
-    if (String(headerRow[c]).trim().toLowerCase() === INVITED_HEADER) return c;
+    if (String(headerRow[c]).trim().toLowerCase() === name) return c;
   }
   return -1;
+}
+
+/** Index of the "Invited" column in the header row, or -1 if absent. */
+function findInvitedColumn(headerRow) {
+  return findHeaderColumn(headerRow, INVITED_HEADER);
 }
 
 /** Sheets checkbox (boolean TRUE) or a human "yes" mark. */
