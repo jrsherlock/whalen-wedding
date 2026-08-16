@@ -3,18 +3,18 @@
  * Receives form POSTs from the wedding website and appends a row
  * to the "Responses" tab of the RSVP spreadsheet.
  *
- * Guest-list gating: the submitted name is validated against the
- * "GuestList" tab before the RSVP is accepted.  No name data is
- * ever sent to the client; matching is entirely server-side.
+ * Guest-list matching (soft): the submitted name is matched against
+ * the "GuestList" tab and the result is written to the "Matched"
+ * column of the response ("Sheila Cook" or "no match"). The RSVP is
+ * ALWAYS accepted — a real guest typing an unexpected nickname must
+ * never be bounced; an unfamiliar name is a 30-second review for the
+ * couple instead. No name data is ever sent to the client.
  *
- * Staged invitations: if the GuestList tab has a column headed
- * "Invited" (case-insensitive, any position), only rows where that
- * cell is checked / TRUE / Yes / Y / X / 1 can RSVP. This lets the
- * whole guest list be entered up front and released in waves by
- * ticking boxes. If the column is absent, every listed name is
- * treated as invited (original behaviour). Names that are listed
- * but not yet invited get the same "not found" response as unknown
- * names, so nothing about the wave-2 list leaks.
+ * Optional "Invited" column: if the GuestList tab has a column with
+ * that header, only ticked rows count for matching (un-ticked rows
+ * show as "no match"). It no longer blocks anyone. The site is not
+ * indexed and the URL only appears on invitations, so a hard gate
+ * cost more (blocked guests) than it protected against.
  */
 
 const SHEET_ID = '1IXK9JWYttUDPNpoaro1ozdrWmdJx3WSp647oPyQGwPA';
@@ -42,7 +42,7 @@ function doPost(e) {
       return jsonResponse({ ok: false, error: 'missing_fields' });
     }
 
-    // Rate-limit by email to prevent brute-force name enumeration
+    // Rate-limit by email to blunt scripted spam
     if (!checkRateLimit(email)) {
       return jsonResponse({
         ok: false,
@@ -51,21 +51,15 @@ function doPost(e) {
       });
     }
 
-    // Validate name against guest list
-    const guestList = loadGuestList();
-    const matched = findGuest(name, guestList);
-    if (!matched) {
-      return jsonResponse({
-        ok: false,
-        error: 'name_not_found',
-        message: "We couldn't find that name on our guest list. Please enter your name exactly as it appears on your invitation."
-      });
-    }
-
-    // Validate-only mode — confirm name without recording an RSVP
+    // Validate-only mode ("Find My Invitation" step) — nothing to
+    // record; matching is soft so this always succeeds.
     if (String(p.action) === 'validate') {
       return jsonResponse({ ok: true });
     }
+
+    // Soft match against the guest list — recorded, never enforced
+    const matched = findGuest(name, loadGuestList());
+    const matchedLabel = matched ? titleCase(matched.canonical) : 'no match';
 
     // Append the RSVP row
     const attendance =
@@ -81,7 +75,8 @@ function doPost(e) {
       String(p.guest_count || ''),
       String(p.dietary_restrictions || ''),
       String(p.dietary_other || ''),
-      String(p.message || '')
+      String(p.message || ''),
+      matchedLabel
     ]);
 
     return jsonResponse({ ok: true });
@@ -115,7 +110,8 @@ function loadGuestList() {
  *   B) Legacy: column A = canonical Name, column B = comma-separated
  *      Aliases (used before the real list was pasted in).
  *
- * Rows are skipped when the "Invited" column exists and is not ticked.
+ * Rows are skipped when an "Invited" column exists and is not ticked
+ * (they then show as "no match" — they are not blocked).
  */
 function buildGuestList(data) {
   const header = data[0] || [];
@@ -127,10 +123,6 @@ function buildGuestList(data) {
 
   for (let i = 1; i < data.length; i++) {        // skip header
     const row = data[i];
-    // Staged rollout: skip rows not yet released. Excluding them here
-    // (rather than flagging them) keeps findGuest's fuzzy tiers from
-    // matching an un-invited name and lets the "not found" reply stay
-    // identical for unknown and not-yet-invited guests.
     if (invitedCol !== -1 && !isTruthyCell(row[invitedCol])) continue;
 
     if (firstCol === -1 || lastCol === -1) {
@@ -225,6 +217,11 @@ function isTruthyCell(v) {
   if (v === true) return true;
   const t = String(v === null || v === undefined ? '' : v).trim().toLowerCase();
   return t === 'true' || t === 'yes' || t === 'y' || t === 'x' || t === '1' || t === '✓';
+}
+
+/** "sheila cook" -> "Sheila Cook" for the Matched column. */
+function titleCase(s) {
+  return s.replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); });
 }
 
 function normalize(name) {
