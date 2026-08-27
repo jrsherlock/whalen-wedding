@@ -23,9 +23,17 @@ no export, no second list to keep in sync.
    - `Wave` — which batch this household is in. **Theresa fills this in.**
 3. **Fill in `Wave`.** `1` = family, close friends, and anyone traveling.
    `2` = everyone else. (More waves are fine — just number them.)
-4. **Check for gaps.** Any row with no address in `EMAIL` can't be emailed and
-   needs a paper invitation or a phone call. As of 2026-08-27 that is
-   Robert Bertellotti, plus the four unfinished rows at the bottom of the sheet.
+4. **Check for gaps.** Audit of the list on 2026-08-27 — 88 households,
+   141 people, which matches Theresa's own running total:
+
+   | Row | Issue | What to do |
+   |---|---|---|
+   | 47 | Robert Bertellotti — no email address (2 invited) | Needs a paper invite or a phone call |
+   | 98 | A pasted block of Outlook addresses sitting in the `First Name` column | Delete the row — all 14 of those people already have their own rows (71–90). Harmless if left (no email, so YAMM skips it), just untidy. |
+   | 100–103 | `AliWatcher_Husband`, `Brady_Husband`, `Dr storey`, `Megan_Husband` — names only, no surname or email | Finish or delete before sending |
+   | 6, 68 | Two and three addresses in one `EMAIL` cell (Roberts, Gillete) | Fine as-is — YAMM sends to every address in the cell |
+
+   No malformed addresses anywhere else in the list.
 
 ---
 
