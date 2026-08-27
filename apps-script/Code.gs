@@ -10,6 +10,11 @@
  * never be bounced; an unfamiliar name is a 30-second review for the
  * couple instead. No name data is ever sent to the client.
  *
+ * Party size: the matched row's "Invited Count" is recorded alongside
+ * the submitted guest count, with a Count Check column flagging any
+ * RSVP for more people than the invitation allows. This is a report,
+ * not a block — nobody is turned away at the form.
+ *
  * Optional "Invited" column: if the GuestList tab has a column with
  * that header, only ticked rows count for matching (un-ticked rows
  * show as "no match"). It no longer blocks anyone. The site is not
@@ -60,6 +65,8 @@ function doPost(e) {
     // Soft match against the guest list — recorded, never enforced
     const matched = findGuest(name, loadGuestList());
     const matchedLabel = matched ? titleCase(matched.canonical) : 'no match';
+    const invitedCount = matched ? matched.invitedCount : '';
+    const countCheck = countCheckLabel(invitedCount, p.guest_count);
 
     // Append the RSVP row
     const attendance =
@@ -76,7 +83,9 @@ function doPost(e) {
       String(p.dietary_restrictions || ''),
       String(p.dietary_other || ''),
       String(p.message || ''),
-      matchedLabel
+      matchedLabel,
+      invitedCount,
+      countCheck
     ]);
 
     return jsonResponse({ ok: true });
@@ -119,18 +128,21 @@ function buildGuestList(data) {
   const firstCol = findHeaderColumn(header, 'first name');
   const lastCol = findHeaderColumn(header, 'last name');
   const aliasCol = findHeaderColumn(header, 'aliases');
+  const countCol = findHeaderColumn(header, 'invited count');
   const guests = [];
 
   for (let i = 1; i < data.length; i++) {        // skip header
     const row = data[i];
     if (invitedCol !== -1 && !isTruthyCell(row[invitedCol])) continue;
 
+    const invitedCount = countCol === -1 ? '' : String(row[countCol] || '').trim();
+
     if (firstCol === -1 || lastCol === -1) {
       // Layout B (legacy): Name | Aliases
       const canonical = normalize(String(row[0]));
       if (!canonical) continue;
-      guests.push(makeGuest(canonical, splitNames(String(row[1] || '')),
-                            canonical.split(' ').slice(-1)[0]));
+      guests.push(withCount(invitedCount, makeGuest(canonical, splitNames(String(row[1] || '')),
+                            canonical.split(' ').slice(-1)[0])));
       continue;
     }
 
@@ -145,23 +157,29 @@ function buildGuestList(data) {
 
     // Household as written, e.g. "sheila john and liam cook"
     const household = normalize(looseName(firstRaw) + ' ' + looseName(lastRaw));
-    guests.push(makeGuest(household, people.concat(extraAliases), primarySurname));
+    guests.push(withCount(invitedCount, makeGuest(household, people.concat(extraAliases), primarySurname)));
 
     // One entry per person and surname, e.g. "john cook"
     if (people.length > 1 || surnames.length > 1) {
       for (let k = 0; k < people.length; k++) {
         if (!surnames.length) {
-          guests.push(makeGuest(people[k], [people[k]].concat(extraAliases), ''));
+          guests.push(withCount(invitedCount, makeGuest(people[k], [people[k]].concat(extraAliases), '')));
           continue;
         }
         for (let s = 0; s < surnames.length; s++) {
-          guests.push(makeGuest(people[k] + ' ' + surnames[s],
-                                [people[k]].concat(extraAliases), surnames[s]));
+          guests.push(withCount(invitedCount, makeGuest(people[k] + ' ' + surnames[s],
+                                [people[k]].concat(extraAliases), surnames[s])));
         }
       }
     }
   }
   return guests;
+}
+
+/** Tag a guest entry with the invited count from its GuestList row. */
+function withCount(invitedCount, guest) {
+  guest.invitedCount = invitedCount;
+  return guest;
 }
 
 function makeGuest(canonical, aliases, lastName) {
@@ -217,6 +235,19 @@ function isTruthyCell(v) {
   if (v === true) return true;
   const t = String(v === null || v === undefined ? '' : v).trim().toLowerCase();
   return t === 'true' || t === 'yes' || t === 'y' || t === 'x' || t === '1' || t === '✓';
+}
+
+/**
+ * Compare the RSVP's guest count against the invitation's Invited Count.
+ * Returns '' when either number is unknown, 'OK' when it fits, or
+ * 'OVER — 4 vs 2 invited' so the couple can follow up directly.
+ */
+function countCheckLabel(invitedCount, submittedCount) {
+  const invited = parseInt(invitedCount, 10);
+  const asked = parseInt(submittedCount, 10);
+  if (isNaN(invited) || isNaN(asked)) return '';
+  if (asked <= invited) return 'OK';
+  return 'OVER \u2014 ' + asked + ' vs ' + invited + ' invited';
 }
 
 /** "sheila cook" -> "Sheila Cook" for the Matched column. */

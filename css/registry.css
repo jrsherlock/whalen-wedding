@@ -151,3 +151,9 @@
   font-size: 1.7rem;
   color: var(--color-cream-dim);
 }
+
+/* A single registry card shouldn't stretch the full grid width. */
+.registry-card:only-child {
+  max-width: 460px;
+  justify-self: center;
+}

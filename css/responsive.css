@@ -341,3 +341,18 @@
     font-size: 1.9rem;
   }
 }
+
+/* ═══════════════════════════════════════════ */
+/* TABLET NAV — max-width: 1024px              */
+/* ═══════════════════════════════════════════ */
+/* The horizontal nav runs past the viewport edge below ~1100px,
+   so tablets get the same hamburger overlay as phones. */
+@media (max-width: 1024px) {
+  .nav-menu {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+}

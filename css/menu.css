@@ -1,0 +1,115 @@
+/* ─── Dinner Menu ───────────────────────────────────────────
+   Buffet menu card: courses stacked inside a bordered panel,
+   two columns on wide screens. Matches the registry/event-card
+   surface treatment. */
+
+.menu-intro {
+  max-width: 60ch;
+  margin: 0 auto var(--space-2xl);
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 1.9rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--color-cream-muted);
+}
+
+.menu-card {
+  position: relative;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-xl);
+  background: linear-gradient(180deg, rgba(19, 28, 57, 0.5) 0%, rgba(11, 18, 39, 0.4) 100%);
+  border: 1px solid var(--color-gold-border-soft);
+}
+
+/* Gold hairline across the top, echoing .registry-card::before */
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+.menu-courses {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-2xl) var(--space-xl);
+}
+
+/* ─── Course ─── */
+.menu-course-title {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.menu-course-rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin: calc(var(--space-md) * -0.5) auto var(--space-md);
+  background: var(--gradient-gold-rule, linear-gradient(90deg, transparent, var(--color-gold), transparent));
+}
+
+.menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.menu-item + .menu-item {
+  margin-top: var(--space-md);
+}
+
+.menu-item-name {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  line-height: 1.4;
+  color: var(--color-cream);
+}
+
+.menu-item-detail {
+  display: block;
+  margin-top: 0.2em;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--color-cream-dim);
+}
+
+/* ─── Closing note ─── */
+.menu-note {
+  max-width: 68ch;
+  margin: var(--space-2xl) auto 0;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-gold-border-soft);
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 1.7rem;
+  font-style: italic;
+  line-height: 1.8;
+  color: var(--color-cream-muted);
+}
+
+@media (max-width: 640px) {
+  .menu-card {
+    padding: var(--space-xl) var(--space-md);
+  }
+  .menu-courses {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+}
