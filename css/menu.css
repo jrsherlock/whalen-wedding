@@ -3,16 +3,6 @@
    two columns on wide screens. Matches the registry/event-card
    surface treatment. */
 
-.menu-intro {
-  max-width: 60ch;
-  margin: 0 auto var(--space-2xl);
-  text-align: center;
-  font-family: var(--font-serif);
-  font-size: 1.9rem;
-  font-style: italic;
-  line-height: 1.7;
-  color: var(--color-cream-muted);
-}
 
 .menu-card {
   position: relative;
