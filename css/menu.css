@@ -42,6 +42,8 @@
   font-style: italic;
   font-weight: 400;
   letter-spacing: var(--tracking-tight);
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: var(--tracking-tight);
   text-align: center;
   color: var(--color-gold);
 }
@@ -58,6 +60,8 @@
   font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: var(--tracking-wide);
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--color-gold);
   text-align: center;

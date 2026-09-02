@@ -187,6 +187,12 @@
   opacity: 0.7;
 }
 
+/* letter-spacing trails the final glyph, widening the gap before the closing
+   rule. Pull it back so the flanking rules sit symmetrically. */
+.hero-prelude::after {
+  margin-left: calc(var(--tracking-widest) * -1);
+}
+
 .hero-names {
   display: flex;
   align-items: baseline;
@@ -241,6 +247,8 @@
   font-size: 1.4rem;
   opacity: 0.9;
   letter-spacing: 0.4em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.4em;
   filter: drop-shadow(0 1px 4px rgba(4, 6, 15, 0.7));
 }
 
@@ -250,6 +258,8 @@
   font-size: 1.9rem;
   font-weight: 400;
   letter-spacing: var(--tracking-wide);
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--color-cream-soft);
   margin-bottom: var(--space-sm);

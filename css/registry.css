@@ -81,6 +81,8 @@
   font-size: 2.2rem;
   font-weight: 400;
   letter-spacing: 0.08em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.08em;
   text-transform: uppercase;
   color: var(--color-cream);
   margin-bottom: var(--space-sm);
@@ -110,7 +112,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6em;
-  padding: var(--space-sm) var(--space-xl);
+  /* Right padding is short by one letter-space: letter-spacing trails the
+     final glyph, so the label would otherwise sit left of the button's centre. */
+  padding: var(--space-sm) calc(var(--space-xl) - 0.2em) var(--space-sm) var(--space-xl);
   font-family: var(--font-body);
   font-size: 1.45rem;
   font-weight: 500;

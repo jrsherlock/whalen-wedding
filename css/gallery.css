@@ -156,6 +156,8 @@
   font-style: italic;
   font-size: 1.5rem;
   letter-spacing: 0.06em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.06em;
   color: var(--color-cream-dim);
 }
 

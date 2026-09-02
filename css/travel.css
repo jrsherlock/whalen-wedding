@@ -154,6 +154,8 @@
   font-size: 2.2rem;
   font-weight: 400;
   letter-spacing: 0.06em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.06em;
   text-transform: uppercase;
   color: var(--color-cream);
   margin-bottom: var(--space-sm);
@@ -187,6 +189,8 @@
   font-family: var(--font-body);
   font-size: 1.4rem;
   letter-spacing: 0.14em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.14em;
   text-transform: uppercase;
   color: var(--color-gold);
   margin-bottom: var(--space-sm);
@@ -196,6 +200,8 @@
   font-size: 1.9rem;
   color: var(--color-cream);
   letter-spacing: 0.04em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.04em;
 }
 
 .hotel-deadline {
@@ -230,6 +236,8 @@
   font-size: 1.45rem;
   font-weight: 500;
   letter-spacing: 0.2em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.2em;
   text-transform: uppercase;
   color: var(--color-gold);
   background: transparent;

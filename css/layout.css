@@ -215,6 +215,12 @@ body.menu-open .mobile-menu-overlay {
   opacity: 0.6;
 }
 
+/* letter-spacing trails the final glyph, widening the gap before the closing
+   rule. Pull it back so the flanking rules sit symmetrically. */
+.section-kicker::after {
+  margin-left: calc(var(--tracking-widest) * -1);
+}
+
 .section-title {
   text-align: center;
   margin-bottom: var(--space-md);
@@ -225,6 +231,8 @@ body.menu-open .mobile-menu-overlay {
   font-size: 4.6rem;
   font-weight: 300;
   letter-spacing: 0.1em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.1em;
   text-transform: uppercase;
   color: var(--color-cream);
   display: inline-block;
