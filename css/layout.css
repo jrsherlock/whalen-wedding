@@ -368,3 +368,17 @@ body.menu-open .mobile-menu-overlay {
   /* Balance the trailing letter-space so the line centres on its glyphs. */
   text-indent: 0.1em;
 }
+
+/* Build stamp — deliberately quiet. It exists so we can tell at a glance
+   whether a browser is showing a stale cached copy. */
+.footer-version {
+  margin-top: var(--space-md);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  letter-spacing: 0.16em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-cream-dim);
+  opacity: 0.35;
+}
