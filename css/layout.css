@@ -308,10 +308,13 @@ body.menu-open .mobile-menu-overlay {
   font-family: var(--font-serif);
   font-size: 2.2rem;
   font-weight: 400;
-  letter-spacing: 0.18em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--color-cream);
   margin-bottom: var(--space-md);
+  /* letter-spacing also trails the final glyph, so a centred box sits half a
+     letter-space left of true centre. Cancel the trailing space. */
+  margin-right: calc(var(--tracking-wide) * -1);
 }
 
 .footer-monogram .amp {
@@ -335,6 +338,8 @@ body.menu-open .mobile-menu-overlay {
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   margin-bottom: var(--space-lg);
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: var(--tracking-wide);
 }
 
 .footer-rule {
@@ -352,4 +357,6 @@ body.menu-open .mobile-menu-overlay {
   font-style: italic;
   color: var(--color-cream-dim);
   letter-spacing: 0.1em;
+  /* Balance the trailing letter-space so the line centres on its glyphs. */
+  text-indent: 0.1em;
 }
